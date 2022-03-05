@@ -1,1 +1,0 @@
-/usr/bin/cmake -H/home/ubuntu/Desktop/catkin_ws/src/mavros/mavros_msgs -B/home/ubuntu/Desktop/catkin_ws/build/mavros_msgs --check-build-system CMakeFiles/Makefile.cmake 0

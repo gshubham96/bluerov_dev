@@ -1,1 +1,0 @@
-/usr/bin/cmake -H/home/ubuntu/Desktop/catkin_ws/src/mavlink -B/home/ubuntu/Desktop/catkin_ws/build/mavlink --check-build-system CMakeFiles/Makefile.cmake 0
