@@ -1,0 +1,1 @@
+/usr/bin/cmake -H/home/ubuntu/Desktop/catkin_ws/src/mavros/libmavconn -B/home/ubuntu/Desktop/catkin_ws/build/libmavconn --check-build-system CMakeFiles/Makefile.cmake 0
