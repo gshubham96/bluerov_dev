@@ -35,8 +35,7 @@ docker exec -it marine_mech /bin/bash
 ### Access gui using
 browse: http://127.0.0.1:6080/
 
-
-### 
+### To install an IDE on linux on MIR room PC
 
 **get portable vs code from here**
 1. Download the 64-bit .tar.gz from https://code.visualstudio.com/download#
@@ -46,3 +45,5 @@ browse: http://127.0.0.1:6080/
 2. In VS Code, press "F1" and search for "Install from VSIX" and select the above downloaded file
 3. After installation, press "F1" and search for "Attach to Running Container" to connect docker and VS-Code for easy development. ^_^
 4. enjoy life with a good beer/cola.
+
+

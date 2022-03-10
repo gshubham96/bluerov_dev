@@ -1,13 +1,12 @@
 # Build the image using `docker build ./ -t gshubham96/bluerov_dev`
-# Run using 'docker run --rm -it -v $(pwd)/vol:/home/ubuntu gshubham96/bluerov_dev'
+# or `docker build ./ --build-arg user=<your-username> --build-arg pass=<your-password> -t gshubham96/bluerov_dev`
+# Run using `docker run --rm -it -p 127.0.0.3:7080:7080 gshubham96/bluerov_dev`
+# Run using 'docker run --rm -it -p 127.0.0.3:7080:7080 -v $(pwd)\medusa:\root gshubham96/bluerov_dev'
 
 # '####################################################'
-# ' gshubham96                                 '
-# ' Last version date: 07/02/2022                      '
-# ' Supports: Ubuntu 16.04LTS                          '
-# '           Ubuntu 18.04LTS                          '
-# '           Ubuntu 20.04LTS                          '
-# '                                                    '
+# ' O_dot_o                                 '
+# ' Last version date: 09/03/2022                      '
+# ' Supports: Ubuntu 18.04LTS                          '
 # '                                                    '
 # ' Installation script by:                            '
 # '    @name: Shubham Garg                             '
@@ -27,43 +26,87 @@
 ######################################
 
 # ---------------------
-# -> Start with the base Ubuntu Image. 
-# TODO: Add tag for Ubuntu version
+# -> Start with Base Image of Ubuntu+ROS+VNC.
 # ------------------------
 FROM tiryoh/ros-desktop-vnc:melodic
 
 # ---------------------
-# -> Add a volume '/root' to keep all user directories
+# -> Dockerfile takes in arguement of user's username and password to build the image
 # ------------------------
-VOLUME /home/ubuntu
+# ARG user
+# ARG pass
+
+# ---------------------
+# -> Add a volume '/root' to install the stack in
+# TODO: Check if there is a better way of doing this
+# ------------------------
+RUN mkdir -p root/ fallback/
 
 # ---------------------
 # -> Update the base image
 # ------------------------
-RUN apt-get update -y && \
-    apt-get upgrade -y && \
-    apt-get clean -y
+RUN apt update && \
+    apt install -y redis-server && \
+    apt clean
+RUN apt upgrade -y
 
 # ---------------------
-# -> Install basic programs that install script expects docker to have
+# -> Install basic programs that medusa install script expects docker to have
 # ------------------------
-RUN apt install sudo -y
+RUN apt install sudo iputils-ping expect git -y
+RUN apt install ros-melodic-desktop-full
 
 # ---------------------
-# -> configure time zone
+# -> Install the Python requirements 
 # ------------------------
-ENV TZ=Europe/Paris
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN apt install python3-pip -y
+RUN pip3 install --user numpy pandas matplotlib scipy sklearn rospkg catkin_pkg future joystick-controller
 
 # ---------------------
-# -> setup content needed for marine course
+# -> Install C++ (apt-get) requirements
 # ------------------------
-RUN apt-get install -y cmake python-catkin-pkg python-empy python-nose python-setuptools libgtest-dev build-essential openssh-server
-RUN apt-get install python-wstool python-rosinstall-generator python-catkin-tools
+RUN apt-get install cmake python-catkin-pkg python-empy python-nose python-setuptools libgtest-dev build-essential openssh-server -y
+RUN apt-get install python-wstool python-rosinstall-generator python-catkin-tools -y
+RUN apt-get install python3-catkin-tools libgeographic-dev ros-melodic-geographic-msgs ros-melodic-geodesy -y
+RUN apt-get install ros-melodic-joy* -y
+
+# ---------------------
+# -> Create the Catkin Space
+# ------------------------
 WORKDIR /home/ubuntu
 RUN mkdir catkin_ws
-WORKDIR /home/ubuntu/catkin_ws
-RUN mkdir src
+RUN mkdir catkin_ws/src
+
+# ---------------------
+# -> Clone the git repo
+# ------------------------
+WORKDIR /home/ubuntu/catkin_ws/src
+COPY autonomous_rov.tgz ./
+RUN tar -zxvf autonomous_rov.tgz
+RUN rm autonomous_rov.tgz
+
+# ---------------------
+# -> Compile time
+# ------------------------
+WORKDIR /home/ubuntu/catkin_ws/
+RUN catkin init
+# RUN /bin/bash -c '. /opt/ros/melodic/setup.bash; catkin build'
+# RUN /bin/bash -c '. /opt/ros/melodic/setup.bash; catkin build -j1 -v'
+
+# ---------------------
+# -> Copy contents of /root to /fallback.
+# Why? In case user wants persistent data, user needs to create and specify their own docker volume. But, this volume needs to be specified during runtime.
+# ------------------------
+WORKDIR /
+RUN cp -r /home fallback/
+# RUN rm -r /fallback/home/ubuntu/catkin_ws/devel/ /fallback/home/ubuntu/catkin_ws/build/ /fallback/home/ubuntu/catkin_ws/logs/
+
+# ---------------------
+# -> Copy contents of /fallback to /root if /root is empty (new volume)
+# Why? In case user wants persistent data, user needs to create and specify their own docker volume. But, this volume needs to be specified during runtime.
+# ------------------------
+WORKDIR /home/ubuntu/
+ENTRYPOINT { A=$(ls /home) && [ "$A" ]; } && { echo "Launching Bluerov Container, Have Fun! :)"; } || { echo "Volume is empty, coying bluerov-stack onto volume! :)" && cp -r /fallback/ /home/ && mv /home/fallback/* /home/ && rm -r /home/fallback; } && /bin/bash
 
 ######################################
 # -> All done, enjoy!
