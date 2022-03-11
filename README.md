@@ -20,11 +20,35 @@ git clone https://github.com/gshubham96/bluerov_dev.git && cd bluerov_dev
 ```
 tar -zxvf volume.tar.gz
 ```
+4. Add the network interface to your PC with the following configs
+```
+static_ip: 192.168.254.20
+DNS: 255.255.255.0
+gateway_ip: 192.168.254.1
+```
+5. Create a docker network with the following command
+```
+docker network create -d macvlan --subnet=192.168.254.0/24 --gateway=192.168.254.1 -o parent=enx00e04c3603d0 net_bluerov
+```
+6. To enable VNC, do the following (optional)
+
+**For Linux**
+ [https://collabnix.com/2-minutes-to-docker-macvlan-networking-a-beginners-guide/](Reference)
+```
+sudo ip link add mac0 link <network_driver_name> type macvlan mode bridge
+sudo ip addr add 192.168.254.19/24 dev mac0
+sudo ifconfig mac0 up
+```
+**For MacOS**
+instructions coming soon hopefully
+
+**For Windows**
+instructions coming soon hopefully
 
 ### Run the Docker container using
 1. move to directory where volume was extracted and run this command
 ```
-docker run -it --rm --name marine_mech -v $(pwd)/volume:/home/ubuntu/Desktop -p 6080:80 --shm-size=512m gshubham96/bluerov_dev
+docker run -it --rm --name marine_mech -v $(pwd)/volume:/home/ubuntu/Desktop -p 6080:80 --shm-size=512m --net=net_bluerov --ip=192.168.254.15 gshubham96/bluerov_dev
 ```
 
 ### Access container using 

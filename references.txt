@@ -1,0 +1,4 @@
+https://stackoverflow.com/questions/60189587/how-to-pass-through-physical-nic-to-docker-container
+https://www.cyberciti.biz/faq/how-do-i-compress-a-whole-linux-or-unix-directory/
+https://stackoverflow.com/questions/60189587/how-to-pass-through-physical-nic-to-docker-container
+docker network create -d macvlan --subnet=192.168.254.0/24 --gateway=192.168.254.1 -o parent=enx00e04c3603d0 net_bluerov
