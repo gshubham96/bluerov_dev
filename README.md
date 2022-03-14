@@ -8,6 +8,7 @@ bluerov development platform for marine mechatronics class for master-mir progra
 ### Setup the container using
 copy paste the commands below onto a terminal from your pc or to the mir room pc
 
+0. Install Docker on your PC.
 1. Download the image from Docker Hub
 ```
 docker pull gshubham96/bluerov_dev
