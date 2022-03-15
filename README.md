@@ -31,6 +31,7 @@ gateway_ip: 192.168.254.1
 docker network create -d macvlan --subnet=192.168.254.0/24 --gateway=192.168.254.1 -o parent=enx00e04c3603d0 net_bluerov
 ```
 `enx00e04c3603d0` is the network driver address. It might be different for you. Find this with the command `ifconfig`.
+
 2. To enable VNC, do the following (optional)
  [https://collabnix.com/2-minutes-to-docker-macvlan-networking-a-beginners-guide/](Reference)
 ```
