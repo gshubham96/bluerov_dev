@@ -44,7 +44,7 @@ sudo ifconfig mac0 up
 **If You are on Linux**
 move to directory where volume was extracted and run this command
 ```
-docker run -it --rm --name marine_mech -v $(pwd)/volume:/home/ubuntu/Desktop -p 6080:80 --shm-size=512m --net=net_bluerov --ip=192.168.254.15 gshubham96/bluerov_dev
+docker run -it --rm --name marine_mech -v $(pwd)/volume:/home/ubuntu/Desktop -p 6080:80 --shm-size=512m --net=net_bluerov --ip=192.168.254.15 --device=/dev/input/js0 gshubham96/bluerov_dev
 ```
 **If You are on Windows**
 move to directory where volume was extracted and run this command
